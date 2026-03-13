@@ -1,6 +1,7 @@
 FROM node:lts-trixie-slim AS base
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends ca-certificates curl git \
+  && apt-get install -y --no-install-recommends ca-certificates curl git locales \
+  && locale-gen en_US.UTF-8 \
   && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 
