@@ -10,6 +10,7 @@ import {
   parseObject,
   renderPaperclipWakePrompt,
   stringifyPaperclipWakePayload,
+  isHeartbeatTriggeredRun,
 } from "@paperclipai/adapter-utils/server-utils";
 import crypto, { randomUUID } from "node:crypto";
 import { WebSocket } from "ws";
@@ -1105,7 +1106,10 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
   });
 
   const templateMessage = nonEmpty(payloadTemplate.message) ?? nonEmpty(payloadTemplate.text);
-  const message = templateMessage ? appendWakeText(templateMessage, wakeText) : wakeText;
+  const heartbeatRun = isHeartbeatTriggeredRun(ctx.context);
+  const message = heartbeatRun
+    ? (templateMessage ? appendWakeText(templateMessage, wakeText) : wakeText)
+    : (templateMessage ?? "");
   const paperclipPayload = buildStandardPaperclipPayload(ctx, wakePayload, paperclipEnv, payloadTemplate);
 
   const agentParams: Record<string, unknown> = {

@@ -82,7 +82,7 @@ describe("gemini execute", () => {
           },
           promptTemplate: "Follow the paperclip heartbeat.",
         },
-        context: {},
+        context: { wakeSource: "timer" },
         authToken: "run-jwt-token",
         onLog: async () => {},
         onMeta: async (meta) => {

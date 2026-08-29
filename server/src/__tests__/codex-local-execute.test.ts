@@ -538,7 +538,7 @@ describe("codex execute", () => {
           },
           promptTemplate: "Follow the paperclip heartbeat.",
         },
-        context: {},
+        context: { wakeSource: "timer" },
         authToken: "run-jwt-token",
         onLog: async (stream, chunk) => {
           logs.push({ stream, chunk });

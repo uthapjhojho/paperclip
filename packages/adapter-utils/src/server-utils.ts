@@ -257,6 +257,24 @@ function normalizePaperclipWakeComment(value: unknown): PaperclipWakeComment | n
   };
 }
 
+/**
+ * Returns true when the run was triggered by a heartbeat timer, an issue event,
+ * or any other automated wake reason — i.e. the adapter should inject the
+ * heartbeat-oriented promptTemplate.  Returns false for bare on-demand runs
+ * (e.g. a user chatting via CLI) so the prompt template can be skipped and
+ * the LLM focuses on the interactive conversation instead.
+ */
+export function isHeartbeatTriggeredRun(context: Record<string, unknown>): boolean {
+  const wakeSource = typeof context.wakeSource === "string" ? context.wakeSource.trim() : "";
+  const wakeReason = typeof context.wakeReason === "string" ? context.wakeReason.trim() : "";
+  // Any explicit wake reason means there is work to process.
+  if (wakeReason.length > 0) return true;
+  // Timer / assignment / automation sources are heartbeat-related.
+  if (wakeSource === "timer" || wakeSource === "assignment" || wakeSource === "automation") return true;
+  // on_demand with no wakeReason = interactive / manual chat → not a heartbeat.
+  return false;
+}
+
 export function normalizePaperclipWakePayload(value: unknown): PaperclipWakePayload | null {
   const payload = parseObject(value);
   const comments = Array.isArray(payload.comments)
